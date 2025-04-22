@@ -53,4 +53,6 @@ public class AppConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
+
+    
 }

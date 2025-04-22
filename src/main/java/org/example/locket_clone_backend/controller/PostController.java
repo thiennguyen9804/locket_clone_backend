@@ -1,32 +1,81 @@
 package org.example.locket_clone_backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
+
+import org.apache.http.HttpStatus;
+import org.example.locket_clone_backend.domain.dto.AddImageDto;
+import org.example.locket_clone_backend.domain.dto.AllPostsRes;
 import org.example.locket_clone_backend.domain.dto.PostDto;
+import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.PostService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
+@Log
 public class PostController {
 
 	private final PostService postService;
 	private final AuthService authService;
+	private final Cloudinary cloudinary;
+
+	// @GetMapping("/posts")
+	// public Page<PostDto> getAllPosts(
+	// Pageable pageable) {
+	// Long userId = authService.getCurrentUser().id;
+	// return postService.getAllPosts(pageable, userId);
+	// }
 
 	@GetMapping("/posts")
-	public Page<PostDto> getAllPosts(
-			@RequestHeader("Authorization") String token,
-			Pageable pageable
+	public ResponseEntity<AllPostsRes> getPostsKeyset(
+		@RequestParam(required = false) 
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) 
+		OffsetDateTime cursorCreatedAt,
+		@RequestParam(defaultValue = "10") int limit
 	) {
+		log.info("cursorCreatedAt = {} " + cursorCreatedAt);
 		Long userId = authService.getCurrentUser().id;
-		return postService.getAllPosts(pageable, userId);
-		
+		AllPostsRes posts = postService.getPostsKeyset(userId, cursorCreatedAt, limit);
+		return ResponseEntity.ok(posts);
+	}
+
+	@PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> uploadImage(
+			@RequestParam MultipartFile file,
+			@RequestParam String caption) {
+		UserDto user = authService.getCurrentUser();
+		String imageUrl = postService.uploadToCloudinary(file);
+		PostDto postDto = PostDto.builder()
+				.caption(caption)
+				.imageUrl(imageUrl)
+				.user(user)
+				.build();
+		postService.createPost(postDto);
+		return ResponseEntity.status(HttpStatus.SC_CREATED).build();
 	}
 
 }

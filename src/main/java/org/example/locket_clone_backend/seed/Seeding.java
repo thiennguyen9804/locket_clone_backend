@@ -47,11 +47,9 @@ public class Seeding implements ApplicationRunner {
 			createUser();
 			addFriend();
 			seedingPost();
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	void createUser() {
@@ -71,8 +69,8 @@ public class Seeding implements ApplicationRunner {
 				.build();
 		user1 = userRepository.save(req1);
 		user2 = userRepository.save(req2);
-		log.info("🚀 ~ Seeding ~ voidcreateUser ~ user1:" + user1);
-		log.info("🚀 ~ Seeding ~ voidcreateUser ~ user2:" + user2);
+		// log.info("🚀 ~ Seeding ~ voidcreateUser ~ user1:" + user1);
+		// log.info("🚀 ~ Seeding ~ voidcreateUser ~ user2:" + user2);
 
 	}
 

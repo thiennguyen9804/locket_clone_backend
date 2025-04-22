@@ -24,11 +24,8 @@ import lombok.ToString;
 @ToString
 public class PostDto {
 	public Long id;
-
 	public String imageUrl;
 	public String caption;
-
 	public Instant createdAt;
-
 	public UserDto user;
 }
