@@ -52,11 +52,8 @@ public class PostController {
 
 	@GetMapping("/posts")
 	public ResponseEntity<AllPostsRes> getPostsKeyset(
-		@RequestParam(required = false) 
-		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) 
-		OffsetDateTime cursorCreatedAt,
-		@RequestParam(defaultValue = "10") int limit
-	) {
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cursorCreatedAt,
+			@RequestParam(defaultValue = "10") int limit) {
 		log.info("cursorCreatedAt = {} " + cursorCreatedAt);
 		Long userId = authService.getCurrentUser().id;
 		AllPostsRes posts = postService.getPostsKeyset(userId, cursorCreatedAt, limit);
@@ -66,13 +63,15 @@ public class PostController {
 	@PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> uploadImage(
 			@RequestParam MultipartFile file,
-			@RequestParam String caption) {
+			@RequestParam String caption,
+			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAt,
+			@RequestParam boolean flip) {
 		UserDto user = authService.getCurrentUser();
 		String imageUrl = postService.uploadToCloudinary(file);
 		PostDto postDto = PostDto.builder()
 				.caption(caption)
 				.imageUrl(imageUrl)
-				.createdAt(Instant.now())
+				.createdAt(createdAt)
 				.user(user)
 				.build();
 		postService.createPost(postDto);
