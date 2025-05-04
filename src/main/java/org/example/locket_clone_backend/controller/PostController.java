@@ -71,7 +71,7 @@ public class PostController {
 		PostDto postDto = PostDto.builder()
 				.caption(caption)
 				.imageUrl(imageUrl)
-				.createdAt(createdAt)
+				.createdAt(Instant.now())
 				.user(user)
 				.build();
 		postService.createPost(postDto);
