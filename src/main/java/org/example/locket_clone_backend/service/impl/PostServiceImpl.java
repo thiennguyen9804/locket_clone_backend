@@ -14,6 +14,7 @@ import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.PostRepository;
+import org.example.locket_clone_backend.service.ImageService;
 import org.example.locket_clone_backend.service.PostService;
 import org.example.locket_clone_backend.utils.specs.PostSpecs;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,6 @@ import lombok.extern.java.Log;
 public class PostServiceImpl implements PostService {
 	private final PostRepository postRepo;
 	private final Mapper<PostEntity, PostDto> mapper;
-	private final Cloudinary cloudinary;
 
 	public PostDto createPost(PostDto postDto) {
 		PostEntity entity = mapper.mapFrom(postDto);
@@ -48,17 +48,7 @@ public class PostServiceImpl implements PostService {
 		return res.map(mapper::mapTo);
 	}
 
-	@Override
-	public String uploadToCloudinary(MultipartFile file) {
-		Map uploadResult = null;
-		try {
-			uploadResult = cloudinary.uploader()
-					.upload(file.getBytes(), ObjectUtils.emptyMap());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return (String) uploadResult.get("secure_url");
-	}
+	
 
 	@Override
 	public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {

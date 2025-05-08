@@ -15,5 +15,5 @@ public interface PostService {
 	public PostDto createPost(PostDto postDto);
 	public Page<PostDto> getAllPosts(Pageable pageable, Long userId);
 	public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit);
-	public String uploadToCloudinary(MultipartFile file);
+	// public String uploadToCloudinary(MultipartFile file);
 }

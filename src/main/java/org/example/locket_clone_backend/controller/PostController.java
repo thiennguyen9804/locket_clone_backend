@@ -30,6 +30,7 @@ import org.example.locket_clone_backend.domain.dto.AllPostsRes;
 import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.service.AuthService;
+import org.example.locket_clone_backend.service.ImageService;
 import org.example.locket_clone_backend.service.PostService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +42,7 @@ public class PostController {
 
 	private final PostService postService;
 	private final AuthService authService;
-	private final Cloudinary cloudinary;
+	private final ImageService imageService;
 
 	// @GetMapping("/posts")
 	// public Page<PostDto> getAllPosts(
@@ -67,7 +68,7 @@ public class PostController {
 			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAt,
 			@RequestParam boolean flip) {
 		UserDto user = authService.getCurrentUser();
-		String imageUrl = postService.uploadToCloudinary(file);
+		String imageUrl = imageService.uploadToCloud(file);
 		PostDto postDto = PostDto.builder()
 				.caption(caption)
 				.imageUrl(imageUrl)
