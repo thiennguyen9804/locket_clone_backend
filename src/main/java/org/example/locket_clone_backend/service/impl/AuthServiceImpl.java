@@ -10,6 +10,7 @@ import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.UserRepository;
 import org.example.locket_clone_backend.security.JwtUtil;
+import org.example.locket_clone_backend.security.JwtUtilImpl;
 import org.example.locket_clone_backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,8 +36,8 @@ public class AuthServiceImpl implements AuthService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        signInReq.getLoginInfo(),
-                        signInReq.getPassword()
+                    signInReq.getLoginInfo(),
+                    signInReq.getPassword()
                 )
         );
         var user = userRepository.findByEmail(signInReq.loginInfo).orElseThrow();

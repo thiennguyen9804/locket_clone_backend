@@ -8,7 +8,7 @@ import org.example.locket_clone_backend.domain.entity.relationship_entity.Relati
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
-import org.example.locket_clone_backend.security.JwtUtil;
+import org.example.locket_clone_backend.security.JwtUtilImpl;
 import org.example.locket_clone_backend.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;

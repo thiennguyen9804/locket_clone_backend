@@ -44,7 +44,7 @@ public class Seeding implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		try {
-			createUser();
+			// createUser();
 			// addFriend();
 			// seedingPost();
 		} catch (Exception e) {
