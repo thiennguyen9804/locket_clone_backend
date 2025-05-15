@@ -20,53 +20,26 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
 @Component
 @Log
+@RequiredArgsConstructor
 public class RsaJwtUtilImpl implements JwtUtil {
 
     private RSAPrivateKey privateKey;
     private RSAPublicKey publicKey;
+    private final KeyProvider keyProvider;
+    private String[] aud = new String[] {"powersync-dev", "powersync"};
 
-    private static RSAPublicKey readX509PublicKey(File file) throws Exception {
-        String key = new String(Files.readAllBytes(file.toPath()), Charset.defaultCharset());
-
-        String publicKeyPEM = key
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replaceAll(System.lineSeparator(), "")
-                .replace("-----END PUBLIC KEY-----", "");
-
-        byte[] encoded = Base64.decodeBase64(publicKeyPEM);
-
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
-    }
-
-    private RSAPrivateKey readPKCS8PrivateKey(File file) throws Exception {
-        String key = new String(Files.readAllBytes(file.toPath()), Charset.defaultCharset());
-
-        String privateKeyPEM = key
-                .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replaceAll(System.lineSeparator(), "")
-                .replace("-----END PRIVATE KEY-----", "");
-
-        byte[] encoded = Base64.decodeBase64(privateKeyPEM);
-
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-        return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
-    }
+    
 
     @PostConstruct
     public void init() {
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL privateRes = classLoader.getResource("keys/private_key.pem");
-            URL publicRes = classLoader.getResource("keys/public_key.pem");
-            privateKey = readPKCS8PrivateKey(new File(privateRes.getFile()));
-            publicKey = readX509PublicKey(new File(publicRes.getFile()));
+            privateKey = keyProvider.getPrivateKey();
+            publicKey = keyProvider.getPublicKey();
         } catch (Exception e) {
             e.printStackTrace();
             log.info("Error reading key");
@@ -78,6 +51,7 @@ public class RsaJwtUtilImpl implements JwtUtil {
         return JWT.create()
                 .withSubject(String.valueOf(id))
                 .withIssuedAt(new Date(System.currentTimeMillis()))
+                .withAudience(aud)
                 .sign(Algorithm.RSA256(privateKey));
     }
 
