@@ -29,7 +29,7 @@ storage:
   # Option 2: Postgres Storage
   type: postgresql
   # This accepts the same parameters as a Postgres replication source connection
-  uri: postgresql://powersync_role:myhighlyrandompassword@localhost:5432/mydb
+  uri: postgresql://localhost:5433/power_sync_db
   sslmode: disable
 
 # The port which the PowerSync API server will listen on
@@ -39,10 +39,11 @@ port: 80
 sync_rules:
   content: |
     bucket_definitions:
-      global:
+      user_posts:
+        parameters: SELECT request.id() AS id
         data:
-          - SELECT * FROM lists
-          - SELECT * FROM todos
+        - SELECT *
+
 
 # Settings for client authentication
 client_auth:
@@ -51,7 +52,7 @@ client_auth:
   # supabase_jwt_secret: your-secret
 
   # JWKS URIs can be specified here.
-  jwks_uri: http://demo-backend:6060/api/auth/keys
+  jwks_uri: http://localhost:8181/api/auth/keys
 
   # JWKS audience
   audience: ['powersync-dev', 'powersync']
@@ -60,4 +61,4 @@ client_auth:
   # See https://docs.powersync.com/self-hosting/telemetry
   telemetry:
     # Opt out of reporting anonymized usage metrics to PowerSync telemetry service
-    disable_telemetry_sharing: false
+    disable_telemetry_sharing: true
