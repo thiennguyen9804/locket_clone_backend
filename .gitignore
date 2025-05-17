@@ -34,3 +34,5 @@ build/
 
 
 private_key.pem
+
+application.properties
