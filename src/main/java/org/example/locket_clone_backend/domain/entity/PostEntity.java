@@ -1,6 +1,8 @@
 package org.example.locket_clone_backend.domain.entity;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
@@ -31,6 +33,8 @@ public class PostEntity {
 	@JoinColumn(name = "user_id")
 	@ManyToOne(cascade = CascadeType.MERGE)
 	public UserEntity user;
-
+	
+	@OneToMany(mappedBy = "post", cascade = CascadeType.MERGE)
+	public Set<InteractionEntity> interactionList;
 
 }

@@ -13,8 +13,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +33,13 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session ->
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			)
+			.logout(logout -> logout
+				.logoutUrl("/auth/logout")
+				.logoutSuccessHandler((request, response, authentication) -> {
+			        SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_OK);
+                })
 			)
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers(

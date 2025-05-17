@@ -48,8 +48,6 @@ public class PostServiceImpl implements PostService {
 		return res.map(mapper::mapTo);
 	}
 
-	
-
 	@Override
 	public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {
 		log.info("PostServiceImpl getPostsKeyset = {} " + cursorCreatedAt);

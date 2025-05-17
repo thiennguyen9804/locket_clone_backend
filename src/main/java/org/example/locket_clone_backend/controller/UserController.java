@@ -27,4 +27,19 @@ public class UserController {
         List<UserDto> res = userService.getFriends(userDto.id);
         return res;
     }
+
+    @PostMapping("/friends/sent")
+    @Operation(summary = "Get all user who I've made friend request")
+    public List<UserDto> getSentRequest() {
+        UserDto userDto = authService.getCurrentUser();
+        List<UserDto> res = userService.getSentRequestFriends(userDto.id);
+        return res;
+    }
+    @PostMapping("/friends/received")
+    @Operation(summary = "Get all user who's made friend request to me")
+    public List<UserDto> getReceivedRquest() {
+        UserDto userDto = authService.getCurrentUser();
+        List<UserDto> res = userService.getReceivedRequestFriends(userDto.id);
+        return res;
+    }
 }

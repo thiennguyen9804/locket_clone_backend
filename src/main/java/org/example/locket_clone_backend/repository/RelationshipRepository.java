@@ -30,4 +30,20 @@ public interface RelationshipRepository extends JpaRepository<RelationshipEntity
 			AND r.relationship = ?2
 	""")
 	List<RelationshipEntity> getFriendsByRelationship(Long userId, Relationship relationship);
+
+	@Query("""
+		SELECT r FROM RelationshipEntity r
+		WHERE (r.user1.id = ?1)
+			AND r.relationship = ?2
+	""")
+	List<RelationshipEntity> getPendingFriendByUser1(Long userId, Relationship relationship);
+
+
+	@Query("""
+		SELECT r FROM RelationshipEntity r
+		WHERE (r.user2.id = ?1)
+			AND r.relationship = ?2
+	""")
+	List<RelationshipEntity> getPendingFriendByUser2(Long userId, Relationship relationship);
+	
 }

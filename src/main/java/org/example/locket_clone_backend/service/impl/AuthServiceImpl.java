@@ -15,9 +15,14 @@ import org.example.locket_clone_backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 
@@ -36,10 +41,8 @@ public class AuthServiceImpl implements AuthService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    signInReq.getLoginInfo(),
-                    signInReq.getPassword()
-                )
-        );
+                        signInReq.getLoginInfo(),
+                        signInReq.getPassword()));
         var user = userRepository.findByEmail(signInReq.loginInfo).orElseThrow();
         UserDto userDto = userMapper.mapTo(user);
 
@@ -72,10 +75,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserDto getCurrentUser() {
         Object principal = SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
-        
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
         if (principal instanceof UserEntity userEntity) {
             UserDto userDto = userMapper.mapTo(userEntity);
             System.out.println(userEntity);
@@ -85,6 +88,5 @@ public class AuthServiceImpl implements AuthService {
         throw new RuntimeException("Cannot cast user in auth service impl getCurrentUser");
 
     }
-
 
 }

@@ -73,4 +73,33 @@ public class UserServiceImpl implements UserService {
 		return res;
 	}
 
+	@Override
+	public List<UserDto> getSentRequestFriends(Long userId) {
+		List<RelationshipEntity> results = relationshipRepository.getPendingFriendByUser1(userId, Relationship.PENDING);
+		List<UserDto> res = results.stream().map((RelationshipEntity rela) -> {
+			if(rela.getUser1().id != userId) {
+				return userMapper.mapTo(rela.getUser1());
+			} else {
+				return userMapper.mapTo(rela.getUser2());
+				
+			}
+		}).toList();
+		log.info("🚀 ~ UserServiceImpl ~ List<UserDto>getFriends ~ res: {}" + res);
+		return res;
+	}
+	@Override
+	public List<UserDto> getReceivedRequestFriends(Long userId) {
+		List<RelationshipEntity> results = relationshipRepository.getPendingFriendByUser2(userId, Relationship.PENDING);
+		List<UserDto> res = results.stream().map((RelationshipEntity rela) -> {
+			if(rela.getUser1().id != userId) {
+				return userMapper.mapTo(rela.getUser1());
+			} else {
+				return userMapper.mapTo(rela.getUser2());
+				
+			}
+		}).toList();
+		log.info("🚀 ~ UserServiceImpl ~ List<UserDto>getFriends ~ res: {}" + res);
+		return res;
+	}
+
 }
