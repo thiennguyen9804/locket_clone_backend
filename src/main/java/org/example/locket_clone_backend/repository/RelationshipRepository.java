@@ -1,5 +1,7 @@
 package org.example.locket_clone_backend.repository;
 
+import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipId;
 import org.hibernate.annotations.processing.HQL;
@@ -15,6 +17,17 @@ import java.util.Optional;
 
 public interface RelationshipRepository extends JpaRepository<RelationshipEntity, RelationshipId> {
 
-	@Query("SELECT r FROM RelationshipEntity r WHERE (r.user1.id = ?1 AND r.user2.id = ?2) OR (r.user1.id = ?2 AND r.user2.id = ?1)")
+	@Query("""
+		SELECT r FROM RelationshipEntity r 
+		WHERE (r.user1.id = ?1 AND r.user2.id = ?2) 
+			OR (r.user1.id = ?2 AND r.user2.id = ?1)
+	""")
 	Optional<RelationshipEntity> findByIds(@NonNull Long user1, @NonNull Long user2);
+
+	@Query("""
+		SELECT r FROM RelationshipEntity r
+		WHERE (r.user1.id = ?1 OR r.user2.id = ?1)
+			AND r.relationship = ?2
+	""")
+	List<RelationshipEntity> getFriendsByRelationship(Long userId, Relationship relationship);
 }

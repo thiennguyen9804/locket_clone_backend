@@ -1,5 +1,7 @@
 package org.example.locket_clone_backend.service.impl;
 
+import java.util.List;
+
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
@@ -54,6 +56,21 @@ public class UserServiceImpl implements UserService {
 		res.setRelationship(Relationship.FRIEND);
 
 		relationshipRepository.save(res);
+	}
+
+	@Override
+	public List<UserDto> getFriends(Long userId) {
+		List<RelationshipEntity> results = relationshipRepository.getFriendsByRelationship(userId, Relationship.FRIEND);
+		List<UserDto> res = results.stream().map((RelationshipEntity rela) -> {
+			if(rela.getUser1().id != userId) {
+				return userMapper.mapTo(rela.getUser1());
+			} else {
+				return userMapper.mapTo(rela.getUser2());
+				
+			}
+		}).toList();
+		log.info("🚀 ~ UserServiceImpl ~ List<UserDto>getFriends ~ res: {}" + res);
+		return res;
 	}
 
 }
