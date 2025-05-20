@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -52,6 +53,8 @@ public class PostController {
 	// }
 
 	@GetMapping("/posts")
+	@Operation(summary = "Get posts")
+
 	public ResponseEntity<AllPostsRes> getPostsKeyset(
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cursorCreatedAt,
 			@RequestParam(defaultValue = "10") int limit) {
@@ -62,10 +65,12 @@ public class PostController {
 	}
 
 	@PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "Add post")
+
 	public ResponseEntity<?> uploadImage(
 			@RequestParam MultipartFile file,
 			@RequestParam String caption,
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAt,
+			// @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAt,
 			@RequestParam boolean flip) {
 		UserDto user = authService.getCurrentUser();
 		String imageUrl = imageService.uploadToCloud(file);

@@ -8,7 +8,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -24,14 +23,19 @@ public class RelationshipEntity {
 	@EmbeddedId
     private RelationshipId id;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
     @MapsId("user1")
-    @JoinColumn(name = "user1", referencedColumnName = "id")
+    @JoinColumns({
+        @JoinColumn(name = "user1", referencedColumnName = "id")
+    })
     private UserEntity user1;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @MapsId("user2")
-    @JoinColumn(name = "user2", referencedColumnName = "id")
+    @JoinColumns({
+
+        @JoinColumn(name = "user2", referencedColumnName = "id")
+    })
     private UserEntity user2;
 
     @Enumerated(EnumType.STRING)
