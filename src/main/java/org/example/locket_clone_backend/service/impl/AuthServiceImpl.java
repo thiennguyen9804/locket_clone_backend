@@ -38,7 +38,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public SignInRes signIn(SignInReq signInReq) {
-
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         signInReq.getLoginInfo(),

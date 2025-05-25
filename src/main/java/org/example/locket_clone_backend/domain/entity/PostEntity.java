@@ -37,4 +37,5 @@ public class PostEntity {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.MERGE)
 	public Set<InteractionEntity> interactionList;
 
+
 }

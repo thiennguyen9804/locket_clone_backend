@@ -17,11 +17,11 @@ import lombok.extern.java.Log;
 @RequiredArgsConstructor
 @Log
 public class ImageServiceImpl implements ImageService {
-    private final Cloudinary cloudinary;
+	private final Cloudinary cloudinary;
 
-    @Override
-    public String uploadToCloud(MultipartFile file) {
-        Map uploadResult = null;
+	@Override
+	public String uploadToCloud(MultipartFile file, boolean flip) {
+		Map uploadResult = null;
 		try {
 			uploadResult = cloudinary.uploader()
 					.upload(file.getBytes(), ObjectUtils.emptyMap());
@@ -30,7 +30,24 @@ public class ImageServiceImpl implements ImageService {
 			e.printStackTrace();
 			log.warning("add image failed");
 		}
-		return (String) uploadResult.get("secure_url");
-    }
+		String url = (String) uploadResult.get("secure_url");
+		if (flip) {
+			url = addFlipToCloudinaryUrl(url);
+		}
+
+		return url;
+	}
+
+	private String addFlipToCloudinaryUrl(String url) {
+		String marker = "/upload/";
+		int index = url.indexOf(marker);
+
+		if (index == -1) {
+			throw new IllegalArgumentException("URL không hợp lệ: không tìm thấy /upload/");
+		}
+
+		// Chèn a_hflip vào ngay sau /upload/
+		return url.substring(0, index + marker.length()) + "a_hflip/" + url.substring(index + marker.length());
+	}
 
 }

@@ -33,8 +33,6 @@ public class RsaJwtUtilImpl implements JwtUtil {
     private final KeyProvider keyProvider;
     private String[] aud = new String[] {"powersync-dev", "powersync"};
 
-    
-
     @PostConstruct
     public void init() {
         try {

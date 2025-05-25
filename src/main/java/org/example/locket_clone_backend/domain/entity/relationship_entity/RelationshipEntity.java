@@ -42,9 +42,9 @@ public class RelationshipEntity {
 	@NotBlank
 	private Relationship relationship;
 
-	@CurrentTimestamp
+	// @CurrentTimestamp
 	private Instant createdAt;
 
-    @UpdateTimestamp
+    // @UpdateTimestamp
     private Instant updatedAt;
 }

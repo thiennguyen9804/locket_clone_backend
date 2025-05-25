@@ -8,6 +8,9 @@ import java.util.List;
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipId;
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
@@ -46,7 +49,7 @@ public class Seeding implements ApplicationRunner {
 		try {
 			createUser();
 			addFriend();
-			// seedingPost();
+			seedingPost();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -78,32 +81,28 @@ public class Seeding implements ApplicationRunner {
 		UserDto t1, t2;
 		t1 = userMapper.mapTo(user1);
 		t2 = userMapper.mapTo(user2);
-		userService.requestFriend(t1, t2);
-		userService.acceptFriend(t2, t1);
-		now = relationshipRepository.findByIds(t1.id, t2.id).get().getCreatedAt();
+		// userService.requestFriend(t1, t2);
+		// userService.acceptFriend(t2, t1);
+		RelationshipEntity relationship = RelationshipEntity.builder()
+			.id(RelationshipId.builder().user1(user1.id).user2(user2.id).build())
+			.user1(user1)
+			.user2(user2)
+			.createdAt(Instant.now().minus(12, ChronoUnit.DAYS))
+			.updatedAt(Instant.now().minus(11, ChronoUnit.DAYS))
+			.relationship(Relationship.FRIEND)
+			.build();
+		relationshipRepository.save(relationship);
 	}
 
 	void setUpPost() {
-		en1 = userRepository.findById(user1.id).get();
-		en2 = userRepository.findById(user2.id).get();
-		String imageUrl = "https://picsum.photos/seed/picsum/1000";
-		for (int i = 1; i <= 5; i++) {
-			PostEntity post = new PostEntity();
-			post.imageUrl = imageUrl;
-			post.caption = "Bài viết " + i + " của User 1";
-			post.createdAt = Instant.now().plus(200, ChronoUnit.DAYS);
-			post.user = user1;
-			posts.add(post);
-		}
-
-		for (int i = 6; i <= 10; i++) {
-			PostEntity post = new PostEntity();
-			post.imageUrl = imageUrl;
-			post.caption = "Bài viết " + i + " của User 2";
-			post.createdAt = Instant.now().plus(100, ChronoUnit.DAYS);
-			post.user = user2;
-			posts.add(post);
-		}
+		en1 = userRepository.findById(user2.id).get();
+		String imageUrl = "https://res.cloudinary.com/dow4rkzmb/image/upload/v1748053256/ylcte1lasx0hcrovhkhm.jpg";
+		PostEntity post = new PostEntity();
+		post.imageUrl = imageUrl;
+		post.caption = "test image";
+		post.createdAt = Instant.now().minus(10, ChronoUnit.DAYS);
+		post.user = user2;
+		posts.add(post);
 	}
 
 	@Transactional

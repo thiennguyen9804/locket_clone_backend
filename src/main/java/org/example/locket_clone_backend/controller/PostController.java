@@ -54,7 +54,6 @@ public class PostController {
 
 	@GetMapping("/posts")
 	@Operation(summary = "Get posts")
-
 	public ResponseEntity<AllPostsRes> getPostsKeyset(
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cursorCreatedAt,
 			@RequestParam(defaultValue = "10") int limit) {
@@ -73,7 +72,7 @@ public class PostController {
 			// @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAt,
 			@RequestParam boolean flip) {
 		UserDto user = authService.getCurrentUser();
-		String imageUrl = imageService.uploadToCloud(file);
+		String imageUrl = imageService.uploadToCloud(file, flip);
 		PostDto postDto = PostDto.builder()
 				.caption(caption)
 				.imageUrl(imageUrl)
