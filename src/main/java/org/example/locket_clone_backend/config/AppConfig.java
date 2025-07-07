@@ -19,40 +19,39 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class AppConfig {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper
-                .getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
-        return modelMapper;
-    }
+  @Bean
+  public ModelMapper modelMapper() {
+    ModelMapper modelMapper = new ModelMapper();
+    modelMapper
+        .getConfiguration()
+        .setMatchingStrategy(MatchingStrategies.LOOSE);
+    return modelMapper;
+  }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            System.out.println(username);
-            return userRepository
-                    .findByEmail(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User with email: " + username + " not found"));
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return username -> {
+      System.out.println(username);
+      return userRepository
+          .findByEmail(username)
+          .orElseThrow(() -> new UsernameNotFoundException("User with email: " + username + " not found"));
 
-        };
-    }
+    };
+  }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    authProvider.setUserDetailsService(userDetailsService());
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
 
-    
 }
