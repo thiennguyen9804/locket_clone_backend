@@ -1,31 +1,24 @@
+# Stage 1: Build the application using Maven and Java 21
+FROM maven:3.9.8-eclipse-temurin-21 AS builder
 
-# Stage 1: Build the application using Maven
-FROM maven:3.9.8-eclipse-temurin-21  AS builder
-
-# Set working directory
 WORKDIR /app
 
-# Copy the pom.xml and download dependencies first
-COPY pom.xml .
-RUN mvn dependency:go-offline
-
-# Copy the rest of the source code
+# Copy pom.xml and source code
 COPY . .
 
-# Build the application
+# Build Spring Boot app
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run the application using a lightweight Java runtime
+# Stage 2: Run the built JAR using minimal base image
 FROM eclipse-temurin:21-jdk-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy the jar from the builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Copy only the built JAR
+COPY --from=builder /app/target/locket_clone_backend-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose the port your Spring Boot app runs on
+# Expose port
 EXPOSE 8181
 
-# Run the Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Start Spring Boot app
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]
