@@ -16,6 +16,8 @@ services:
 
   locket_backend:
     build: .
+    env_file:
+      - .env
     container_name: locket_backend
     ports:
       - "8181:8181"

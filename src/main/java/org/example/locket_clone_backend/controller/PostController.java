@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -55,7 +56,7 @@ public class PostController {
   // }
 
   @GetMapping("/posts")
-  @Operation(summary = "Get posts")
+  @Operation(summary = "Get posts", security = @SecurityRequirement(name = "bearerAuth"))
   public ResponseEntity<AllPostsRes> getPostsKeyset(
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cursorCreatedAt,
       @RequestParam(defaultValue = "10") int limit) {
@@ -66,7 +67,7 @@ public class PostController {
   }
 
   @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @Operation(summary = "Add post")
+  @Operation(summary = "Add post", security = @SecurityRequirement(name = "bearerAuth"))
   public ResponseEntity<?> uploadImage(
       @RequestParam MultipartFile file,
       @RequestParam String caption,
@@ -84,7 +85,7 @@ public class PostController {
   }
 
   @PatchMapping(value = "posts/interact/{id}")
-  @Operation(summary = "React to other's post")
+  @Operation(summary = "React to other's post", security = @SecurityRequirement(name = "bearerAuth"))
   public ResponseEntity<Void> interact(
       @PathVariable(name = "id") Long postId,
       @RequestParam String emoji) {
