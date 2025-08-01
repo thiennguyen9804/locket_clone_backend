@@ -4,18 +4,20 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.example.locket_clone_backend.domain.dto.UserDto;
+import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipId;
 import org.example.locket_clone_backend.mapper.Mapper;
+import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
-import org.example.locket_clone_backend.service.UserService;
 import org.example.locket_clone_backend.service.UserService;
 import org.example.locket_clone_backend.service.impl.PostServiceImpl;
 import org.springframework.boot.ApplicationArguments;
@@ -40,14 +42,6 @@ public class Seeding implements ApplicationRunner {
     this.user2 = user2;
   }
 
-  public void setEn1(UserEntity en1) {
-    this.en1 = en1;
-  }
-
-  public void setEn2(UserEntity en2) {
-    this.en2 = en2;
-  }
-
   public void setNow(Instant now) {
     this.now = now;
   }
@@ -57,10 +51,11 @@ public class Seeding implements ApplicationRunner {
   }
 
   private UserEntity user1, user2;
-  private UserEntity en1, en2;
+  private PostEntity post1, post2;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final RelationshipRepository relationshipRepository;
+  private final InteractionRepository interactionRepository;
   private final PasswordEncoder bEncoder;
   private final UserService userService;
   private final Mapper<UserEntity, UserDto> userMapper;
@@ -74,6 +69,7 @@ public class Seeding implements ApplicationRunner {
       createUser();
       addFriend();
       seedingPost();
+      seedInteraction();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -119,14 +115,21 @@ public class Seeding implements ApplicationRunner {
   }
 
   void setUpPost() {
-    en1 = userRepository.findById(user2.id).get();
+    post1 = PostEntity.builder()
+        .caption("my pretty Kiana")
+        .imageUrl("https://res.cloudinary.com/dow4rkzmb/image/upload/v1752720466/yksl67l6w2wh1x4xuqwn.jpg")
+        .user(user1)
+        .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
+        .build();
+    posts.add(post1);
     String imageUrl = "https://res.cloudinary.com/dow4rkzmb/image/upload/v1748053256/ylcte1lasx0hcrovhkhm.jpg";
-    PostEntity post = new PostEntity();
-    post.imageUrl = imageUrl;
-    post.caption = "test image";
-    post.createdAt = Instant.now().minus(10, ChronoUnit.DAYS);
-    post.user = user2;
-    posts.add(post);
+    post2 = new PostEntity();
+    post2.imageUrl = imageUrl;
+    post2.caption = "test image";
+    post2.createdAt = Instant.now().minus(10, ChronoUnit.DAYS);
+    post2.user = user2;
+    posts.add(post2);
+
   }
 
   @Transactional
@@ -137,6 +140,31 @@ public class Seeding implements ApplicationRunner {
       postRepository.save(post);
     }
 
+  }
+
+  void seedInteraction() {
+    List<String> emojis = List.of("😀", "😂", "😍", "🤔", "😎", "😭", "😡", "👍", "👎", "❤️");
+    Random random = new Random();
+
+    InteractionEntity interaction1 = InteractionEntity.builder()
+        .user(user1)
+        .post(post2)
+        .emoji(emojis.get(2))
+        .createdAt(Instant.now())
+        .build();
+
+    InteractionEntity interaction2 = InteractionEntity.builder()
+        .user(user2)
+        .post(post1)
+        .emoji(emojis.get(9))
+        .createdAt(Instant.now())
+        .build();
+
+    interactionRepository.save(interaction1);
+    interactionRepository.save(interaction2);
+
+    log.info("🚀 ~ Seeding ~ voidseedInteraction ~ user1 reacted to post2");
+    log.info("🚀 ~ Seeding ~ voidseedInteraction ~ user2 reacted to post1");
   }
 
 }

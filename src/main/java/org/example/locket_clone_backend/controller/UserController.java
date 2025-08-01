@@ -6,6 +6,7 @@ import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ public class UserController {
   private final AuthService authService;
   private final UserService userService;
 
-  @PostMapping("/friends")
+  @GetMapping("/friends")
   @Operation(summary = "Get user's friend", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getFriends() {
     UserDto userDto = authService.getCurrentUser();
@@ -29,7 +30,7 @@ public class UserController {
     return res;
   }
 
-  @PostMapping("/friends/sent")
+  @GetMapping("/friends/sent")
   @Operation(summary = "Get all user who I've made friend request", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getSentRequest() {
     UserDto userDto = authService.getCurrentUser();
@@ -37,7 +38,7 @@ public class UserController {
     return res;
   }
 
-  @PostMapping("/friends/received")
+  @GetMapping("/friends/received")
   @Operation(summary = "Get all user who's made friend request to me", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getReceivedRquest() {
     UserDto userDto = authService.getCurrentUser();

@@ -40,11 +40,12 @@ public class PostServiceImpl implements PostService {
     return res;
   }
 
-  @Override
-  public Page<PostDto> getAllPosts(Pageable pageable, Long userId) {
-    Page<PostEntity> res = postRepo.findAll(PostSpecs.isPostBelongToFriendOrSelf(userId), pageable);
-    return res.map(postMapper::mapTo);
-  }
+  // @Override
+  // public Page<PostDto> getAllPosts(Pageable pageable, Long userId) {
+  // Page<PostEntity> res =
+  // postRepo.findAll(PostSpecs.isPostBelongToFriendOrSelf(userId), pageable);
+  // return res.map(postMapper::mapTo);
+  // }
 
   @Override
   public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {

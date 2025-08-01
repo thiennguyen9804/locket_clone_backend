@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface PostService {
   public PostDto createPost(PostDto postDto);
 
-  public Page<PostDto> getAllPosts(Pageable pageable, Long userId);
+  // public Page<PostDto> getAllPosts(Pageable pageable, Long userId);
 
   public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit);
 
