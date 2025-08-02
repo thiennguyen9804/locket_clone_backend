@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,31 +19,31 @@ import lombok.*;
 @Entity
 @Setter
 public class RelationshipEntity {
-	@EmbeddedId
-    private RelationshipId id;
+  @EmbeddedId
+  private RelationshipId id;
 
-	@OneToOne(cascade = CascadeType.MERGE)
-    @MapsId("user1")
-    @JoinColumns({
-        @JoinColumn(name = "user1", referencedColumnName = "id")
-    })
-    private UserEntity user1;
+  @OneToOne(cascade = CascadeType.MERGE)
+  @MapsId("user1")
+  @JoinColumns({
+      @JoinColumn(name = "user1", referencedColumnName = "id")
+  })
+  private UserEntity user1;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @MapsId("user2")
-    @JoinColumns({
+  @OneToOne(cascade = CascadeType.MERGE)
+  @MapsId("user2")
+  @JoinColumns({
 
-        @JoinColumn(name = "user2", referencedColumnName = "id")
-    })
-    private UserEntity user2;
+      @JoinColumn(name = "user2", referencedColumnName = "id")
+  })
+  private UserEntity user2;
 
-    @Enumerated(EnumType.STRING)
-	@NotBlank
-	private Relationship relationship;
+  @Enumerated(EnumType.STRING)
+  @NotBlank
+  private Relationship relationship;
 
-	// @CurrentTimestamp
-	private Instant createdAt;
+  // @CurrentTimestamp
+  private Instant createdAt;
 
-    // @UpdateTimestamp
-    private Instant updatedAt;
+  // @UpdateTimestamp
+  private Instant updatedAt;
 }

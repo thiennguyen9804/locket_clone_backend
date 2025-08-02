@@ -34,22 +34,6 @@ import lombok.extern.java.Log;
 @Log
 public class Seeding implements ApplicationRunner {
 
-  public void setUser1(UserEntity user1) {
-    this.user1 = user1;
-  }
-
-  public void setUser2(UserEntity user2) {
-    this.user2 = user2;
-  }
-
-  public void setNow(Instant now) {
-    this.now = now;
-  }
-
-  public void setPosts(List<PostEntity> posts) {
-    this.posts = posts;
-  }
-
   private UserEntity user1, user2;
   private PostEntity post1, post2;
   private final PostRepository postRepository;
@@ -75,6 +59,7 @@ public class Seeding implements ApplicationRunner {
     }
   }
 
+  @Transactional
   void createUser() {
     UserEntity req1 = UserEntity.builder()
         .email("thiennguyen9804@gmail.com")
@@ -97,6 +82,7 @@ public class Seeding implements ApplicationRunner {
 
   }
 
+  @Transactional
   void addFriend() {
     UserDto t1, t2;
     t1 = userMapper.mapTo(user1);
@@ -142,9 +128,9 @@ public class Seeding implements ApplicationRunner {
 
   }
 
+  @Transactional
   void seedInteraction() {
     List<String> emojis = List.of("😀", "😂", "😍", "🤔", "😎", "😭", "😡", "👍", "👎", "❤️");
-    Random random = new Random();
 
     InteractionEntity interaction1 = InteractionEntity.builder()
         .user(user1)

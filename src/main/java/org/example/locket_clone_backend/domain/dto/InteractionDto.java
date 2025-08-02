@@ -17,5 +17,5 @@ public class InteractionDto {
   private Long postId;
   private String emoji;
   private Instant createdAt;
-  private PostDto post;
+  // private PostDto post;
 }

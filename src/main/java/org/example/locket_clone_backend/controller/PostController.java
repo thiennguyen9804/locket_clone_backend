@@ -60,7 +60,7 @@ public class PostController {
   public ResponseEntity<AllPostsRes> getPostsKeyset(
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime cursorCreatedAt,
       @RequestParam(defaultValue = "10") int limit) {
-    log.info("cursorCreatedAt = {} " + cursorCreatedAt);
+    // log.info("cursorCreatedAt = {} " + cursorCreatedAt);
     Long userId = authService.getCurrentUser().id;
     AllPostsRes posts = postService.getPostsKeyset(userId, cursorCreatedAt, limit);
     return ResponseEntity.ok(posts);

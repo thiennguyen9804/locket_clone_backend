@@ -50,8 +50,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long>, JpaSpec
                              WHEN r.user1 = :userId THEN r.user2
                              ELSE r.user1
                          END
-                  FROM relationships r
-                  WHERE (r.user1 = :userId OR r.user2 = :userId)
+                  FROM relationships r WHERE (r.user1 = :userId OR r.user2 = :userId)
                     AND r.relationship = 'FRIEND'
                     AND r.updated_at < p.created_at
                   UNION

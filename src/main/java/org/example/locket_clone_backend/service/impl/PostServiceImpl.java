@@ -51,10 +51,18 @@ public class PostServiceImpl implements PostService {
   public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {
     log.info("PostServiceImpl getPostsKeyset = {} " + cursorCreatedAt);
     List<PostEntity> result = postRepo.findPostsKeyset(userId, cursorCreatedAt, limit);
+    for (PostEntity entity : result) {
+
+      log.info("PostServiceImpl getPostsKeyset postEntity = {} " + entity);
+    }
     List<PostDto> postList = result.stream().map(postMapper::mapTo).collect(Collectors.toList());
     Long count = postRepo.countAllPosts(userId);
     return AllPostsRes.builder().content(postList).totalElements(count).build();
   }
+
+  // private List<PostDto> customPostMap(List<PostEntity> entities) {
+  //
+  // }
 
   @Override
   public void interactPost(UserDto userDto, Long postId, String emoji) {
