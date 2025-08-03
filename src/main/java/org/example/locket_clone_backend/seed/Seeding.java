@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
@@ -14,10 +15,12 @@ import org.example.locket_clone_backend.domain.entity.relationship_entity.Relati
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipId;
 import org.example.locket_clone_backend.mapper.Mapper;
+import org.example.locket_clone_backend.mapper.impl.PostMapper;
 import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
+import org.example.locket_clone_backend.service.PostService;
 import org.example.locket_clone_backend.service.UserService;
 import org.example.locket_clone_backend.service.impl.PostServiceImpl;
 import org.springframework.boot.ApplicationArguments;
@@ -43,9 +46,11 @@ public class Seeding implements ApplicationRunner {
   private final PasswordEncoder bEncoder;
   private final UserService userService;
   private final Mapper<UserEntity, UserDto> userMapper;
+  private PostService postService;
   private Instant now;
+  private PostMapper postMapper;
 
-  List<PostEntity> posts = new ArrayList<>();
+  List<PostDto> posts = new ArrayList<>();
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
@@ -101,31 +106,32 @@ public class Seeding implements ApplicationRunner {
   }
 
   void setUpPost() {
-    post1 = PostEntity.builder()
+    PostDto postDto1 = PostDto.builder()
         .caption("my pretty Kiana")
         .imageUrl("https://res.cloudinary.com/dow4rkzmb/image/upload/v1752720466/yksl67l6w2wh1x4xuqwn.jpg")
-        .user(user1)
+        .user(userMapper.mapTo(user1))
         .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
         .build();
-    posts.add(post1);
-    String imageUrl = "https://res.cloudinary.com/dow4rkzmb/image/upload/v1748053256/ylcte1lasx0hcrovhkhm.jpg";
-    post2 = new PostEntity();
-    post2.imageUrl = imageUrl;
-    post2.caption = "test image";
-    post2.createdAt = Instant.now().minus(10, ChronoUnit.DAYS);
-    post2.user = user2;
-    posts.add(post2);
 
+    PostDto postDto2 = PostDto.builder()
+        .caption("test image")
+        .imageUrl("https://res.cloudinary.com/dow4rkzmb/image/upload/v1748053256/ylcte1lasx0hcrovhkhm.jpg")
+        .user(userMapper.mapTo(user2))
+        .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
+        .build();
+
+    posts.clear();
+    posts.add(postDto1);
+    posts.add(postDto2);
   }
 
   @Transactional
   void seedingPost() {
     setUpPost();
-    for (PostEntity post : posts) {
-      log.info("🚀 ~ Seeding ~ voidseedingPost ~ post: " + post);
-      postRepository.save(post);
+    for (PostDto postDto : posts) {
+      PostDto saved = postService.createPost(postDto);
+      log.info("✅ Seeded post: " + saved);
     }
-
   }
 
   @Transactional

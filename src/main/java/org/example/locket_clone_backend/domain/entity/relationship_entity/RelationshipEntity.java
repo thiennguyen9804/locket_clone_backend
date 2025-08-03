@@ -22,6 +22,7 @@ public class RelationshipEntity {
   @EmbeddedId
   private RelationshipId id;
 
+  // sender
   @OneToOne(cascade = CascadeType.MERGE)
   @MapsId("user1")
   @JoinColumns({
@@ -29,6 +30,7 @@ public class RelationshipEntity {
   })
   private UserEntity user1;
 
+  // receiver
   @OneToOne(cascade = CascadeType.MERGE)
   @MapsId("user2")
   @JoinColumns({

@@ -18,7 +18,7 @@ import lombok.*;
 @ToString
 @Entity
 @Setter
-public class PostVisibility {
+public class PostVisibilityEntity {
   @EmbeddedId
   private PostVisibilityId id;
 
@@ -28,8 +28,8 @@ public class PostVisibility {
   private PostEntity post;
 
   @ManyToOne(cascade = CascadeType.MERGE)
-  @MapsId("user1")
-  @JoinColumn(name = "user1", referencedColumnName = "id")
+  @MapsId("userCanSee")
+  @JoinColumn(name = "user_can_see", referencedColumnName = "id")
   private UserEntity user;
 
   @CurrentTimestamp

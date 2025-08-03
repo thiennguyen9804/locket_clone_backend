@@ -16,6 +16,6 @@ import lombok.extern.java.Log;
 @Log
 @Builder
 public class PostVisibilityId {
-  private Long user1;
+  private Long userCanSee;
   private Long post;
 }

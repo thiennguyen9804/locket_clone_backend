@@ -10,13 +10,20 @@ import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityEntity;
+import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityId;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
+import org.example.locket_clone_backend.repository.PostVisibilityRepository;
+import org.example.locket_clone_backend.repository.RelationshipRepository;
 import org.example.locket_clone_backend.service.PostService;
+import org.example.locket_clone_backend.service.UserService;
 import org.example.locket_clone_backend.utils.specs.PostSpecs;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.memory.UserAttributeEditor;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -27,25 +34,38 @@ import lombok.extern.java.Log;
 @Log
 public class PostServiceImpl implements PostService {
   private final PostRepository postRepo;
+  private final InteractionRepository interactionRepository;
+  private final PostVisibilityRepository postVisibilityRepository;
+  private final RelationshipRepository relationshipRepository;
+
   private final Mapper<PostEntity, PostDto> postMapper;
 
   private final Mapper<UserEntity, UserDto> userMapper;
 
-  private final InteractionRepository interactionRepository;
+  private final UserService userService;
 
   public PostDto createPost(PostDto postDto) {
     PostEntity entity = postMapper.mapFrom(postDto);
     final PostEntity saved = postRepo.save(entity);
+    final List<UserEntity> friendList = userService.getFriends(saved.user.id)
+        .stream()
+        .map(userMapper::mapFrom)
+        .collect(Collectors.toList());
+
+    bulkAddPost(friendList, saved);
     final PostDto res = postMapper.mapTo(saved);
     return res;
   }
 
-  // @Override
-  // public Page<PostDto> getAllPosts(Pageable pageable, Long userId) {
-  // Page<PostEntity> res =
-  // postRepo.findAll(PostSpecs.isPostBelongToFriendOrSelf(userId), pageable);
-  // return res.map(postMapper::mapTo);
-  // }
+  private void bulkAddPost(List<UserEntity> users, PostEntity post) {
+    List<PostVisibilityEntity> visibilities = users.stream()
+        .map(user -> PostVisibilityEntity.builder()
+            .id(new PostVisibilityId(user.id, post.id))
+            .build())
+        .toList();
+
+    postVisibilityRepository.saveAll(visibilities);
+  }
 
   @Override
   public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {
@@ -59,10 +79,6 @@ public class PostServiceImpl implements PostService {
     Long count = postRepo.countAllPosts(userId);
     return AllPostsRes.builder().content(postList).totalElements(count).build();
   }
-
-  // private List<PostDto> customPostMap(List<PostEntity> entities) {
-  //
-  // }
 
   @Override
   public void interactPost(UserDto userDto, Long postId, String emoji) {
