@@ -13,6 +13,7 @@ import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityEntity;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityId;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
+import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.memory.UserAttributeEditor;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -39,7 +41,6 @@ public class PostServiceImpl implements PostService {
   private final RelationshipRepository relationshipRepository;
 
   private final Mapper<PostEntity, PostDto> postMapper;
-
   private final Mapper<UserEntity, UserDto> userMapper;
 
   private final UserService userService;
@@ -47,10 +48,20 @@ public class PostServiceImpl implements PostService {
   public PostDto createPost(PostDto postDto) {
     PostEntity entity = postMapper.mapFrom(postDto);
     final PostEntity saved = postRepo.save(entity);
-    final List<UserEntity> friendList = userService.getFriends(saved.user.id)
-        .stream()
-        .map(userMapper::mapFrom)
-        .collect(Collectors.toList());
+    final Long userId = saved.user.id;
+
+    List<RelationshipEntity> results = relationshipRepository.findFriendsByRelationship(userId, Relationship.FRIEND);
+    List<UserEntity> friendList = results.stream().map((RelationshipEntity rela) -> {
+      if (rela.getUser1().id != userId) {
+        return rela.getUser1();
+      } else {
+        return rela.getUser2();
+
+      }
+    }).toList();
+    for (UserEntity friend : friendList) {
+      log.info("🚀 ~ PostServiceImpl ~ List<UserEntity>getFriends ~ res: {} " + friend);
+    }
 
     bulkAddPost(friendList, saved);
     final PostDto res = postMapper.mapTo(saved);
@@ -61,8 +72,14 @@ public class PostServiceImpl implements PostService {
     List<PostVisibilityEntity> visibilities = users.stream()
         .map(user -> PostVisibilityEntity.builder()
             .id(new PostVisibilityId(user.id, post.id))
+            .user(user)
+            .post(post)
             .build())
         .toList();
+    for (PostVisibilityEntity postIter : visibilities) {
+
+      log.info("PostServiceImpl bulkAddPost postVisbility = {} " + postIter);
+    }
 
     postVisibilityRepository.saveAll(visibilities);
   }
@@ -71,10 +88,10 @@ public class PostServiceImpl implements PostService {
   public AllPostsRes getPostsKeyset(Long userId, OffsetDateTime cursorCreatedAt, int limit) {
     log.info("PostServiceImpl getPostsKeyset = {} " + cursorCreatedAt);
     List<PostEntity> result = postRepo.findPostsKeyset(userId, cursorCreatedAt, limit);
-    for (PostEntity entity : result) {
-
-      log.info("PostServiceImpl getPostsKeyset postEntity = {} " + entity);
-    }
+    // for (PostEntity entity : result) {
+    //
+    // log.info("PostServiceImpl getPostsKeyset postEntity = {} " + entity);
+    // }
     List<PostDto> postList = result.stream().map(postMapper::mapTo).collect(Collectors.toList());
     Long count = postRepo.countAllPosts(userId);
     return AllPostsRes.builder().content(postList).totalElements(count).build();

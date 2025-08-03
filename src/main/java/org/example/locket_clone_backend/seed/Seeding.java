@@ -39,6 +39,7 @@ public class Seeding implements ApplicationRunner {
 
   private UserEntity user1, user2;
   private PostEntity post1, post2;
+  private Instant now;
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final RelationshipRepository relationshipRepository;
@@ -46,9 +47,8 @@ public class Seeding implements ApplicationRunner {
   private final PasswordEncoder bEncoder;
   private final UserService userService;
   private final Mapper<UserEntity, UserDto> userMapper;
-  private PostService postService;
-  private Instant now;
-  private PostMapper postMapper;
+  private final PostService postService;
+  private final PostMapper postMapper;
 
   List<PostDto> posts = new ArrayList<>();
 
