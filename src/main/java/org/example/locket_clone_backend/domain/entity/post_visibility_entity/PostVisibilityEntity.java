@@ -18,6 +18,7 @@ import lombok.*;
 @ToString
 @Entity
 @Setter
+@Getter
 public class PostVisibilityEntity {
   @EmbeddedId
   private PostVisibilityId id;

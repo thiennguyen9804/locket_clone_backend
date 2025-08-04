@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserDto> getFriends(Long userId) {
-    List<RelationshipEntity> results = relationshipRepository.findFriendsByRelationship(userId, Relationship.FRIEND);
+    List<RelationshipEntity> results = relationshipRepository.findUsersByRelationship(userId, Relationship.FRIEND);
     List<UserDto> res = results.stream().map((RelationshipEntity rela) -> {
       if (rela.getUser1().id != userId) {
         return userMapper.mapTo(rela.getUser1());

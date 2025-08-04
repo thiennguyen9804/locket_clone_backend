@@ -30,7 +30,7 @@ public interface RelationshipRepository extends JpaRepository<RelationshipEntity
       	WHERE (r.user1.id = ?1 OR r.user2.id = ?1)
       		AND r.relationship = ?2
       """)
-  List<RelationshipEntity> findFriendsByRelationship(Long userId, Relationship relationship);
+  List<RelationshipEntity> findUsersByRelationship(Long userId, Relationship relationship);
 
   @Query("""
       	SELECT r FROM RelationshipEntity r

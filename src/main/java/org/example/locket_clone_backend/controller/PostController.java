@@ -33,6 +33,8 @@ import org.example.locket_clone_backend.domain.dto.AddImageDto;
 import org.example.locket_clone_backend.domain.dto.AllPostsRes;
 import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
+import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.mapper.impl.UserMapper;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.ImageService;
 import org.example.locket_clone_backend.service.PostService;
@@ -47,6 +49,7 @@ public class PostController {
   private final PostService postService;
   private final AuthService authService;
   private final ImageService imageService;
+  private final UserMapper userMapper;
 
   // @GetMapping("/posts")
   // public Page<PostDto> getAllPosts(
@@ -72,15 +75,18 @@ public class PostController {
       @RequestParam MultipartFile file,
       @RequestParam String caption,
       @RequestParam boolean flip) {
-    UserDto user = authService.getCurrentUser();
     String imageUrl = imageService.uploadToCloud(file, flip);
-    PostDto postDto = PostDto.builder()
+    // PostDto postDto = PostDto.builder()
+    // .caption(caption)
+    // .imageUrl(imageUrl)
+    // .createdAt(Instant.now())
+    // .user(user)
+    // .build();
+    AddImageDto dto = AddImageDto.builder()
         .caption(caption)
-        .imageUrl(imageUrl)
-        .createdAt(Instant.now())
-        .user(user)
+        .fileUrl(imageUrl)
         .build();
-    postService.createPost(postDto);
+    postService.createPost(dto);
     return ResponseEntity.status(HttpStatus.SC_CREATED).build();
   }
 
@@ -89,7 +95,8 @@ public class PostController {
   public ResponseEntity<Void> interact(
       @PathVariable(name = "id") Long postId,
       @RequestParam String emoji) {
-    UserDto userDto = authService.getCurrentUser();
+    UserEntity userEntity = authService.getCurrentUser();
+    final UserDto userDto = userMapper.mapTo(userEntity);
     Long userId = userDto.id;
     postService.interactPost(userDto, postId, emoji);
     return ResponseEntity.status(HttpStatus.SC_NO_CONTENT).build();

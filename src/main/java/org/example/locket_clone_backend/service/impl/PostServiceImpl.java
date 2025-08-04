@@ -1,9 +1,11 @@
 package org.example.locket_clone_backend.service.impl;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.example.locket_clone_backend.domain.dto.AddImageDto;
 import org.example.locket_clone_backend.domain.dto.AllPostsRes;
 import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
@@ -19,6 +21,7 @@ import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.PostVisibilityRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
+import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.PostService;
 import org.example.locket_clone_backend.service.UserService;
 import org.example.locket_clone_backend.utils.specs.PostSpecs;
@@ -44,13 +47,24 @@ public class PostServiceImpl implements PostService {
   private final Mapper<UserEntity, UserDto> userMapper;
 
   private final UserService userService;
+  private final AuthService authService;
 
-  public PostDto createPost(PostDto postDto) {
-    PostEntity entity = postMapper.mapFrom(postDto);
-    final PostEntity saved = postRepo.save(entity);
-    final Long userId = saved.user.id;
+  public PostDto createPost(AddImageDto dto) {
+    // PostEntity entity = postMapper.mapFrom(postDto);
+    // final PostEntity saved = postRepo.save(entity);
+    // final Long userId = saved.user.id;
+    //
+    final UserEntity author = authService.getCurrentUser();
+    PostEntity postEntity = PostEntity.builder()
+        .caption(dto.getCaption())
+        .imageUrl(dto.getFileUrl())
+        .createdAt(Instant.now())
+        .user(author)
+        .build();
+    final Long userId = author.id;
+    postRepo.save(postEntity);
 
-    List<RelationshipEntity> results = relationshipRepository.findFriendsByRelationship(userId, Relationship.FRIEND);
+    List<RelationshipEntity> results = relationshipRepository.findUsersByRelationship(userId, Relationship.FRIEND);
     List<UserEntity> friendList = results.stream().map((RelationshipEntity rela) -> {
       if (rela.getUser1().id != userId) {
         return rela.getUser1();
@@ -60,11 +74,11 @@ public class PostServiceImpl implements PostService {
       }
     }).toList();
     for (UserEntity friend : friendList) {
-      log.info("🚀 ~ PostServiceImpl ~ List<UserEntity>getFriends ~ res: {} " + friend);
+      log.info("🚀 ~ PostServiceImpl ~ List<UserEntity>getFriends ~ res: {} " +
+          friend);
     }
-
-    bulkAddPost(friendList, saved);
-    final PostDto res = postMapper.mapTo(saved);
+    bulkAddPost(friendList, postEntity);
+    final PostDto res = postMapper.mapTo(postEntity);
     return res;
   }
 

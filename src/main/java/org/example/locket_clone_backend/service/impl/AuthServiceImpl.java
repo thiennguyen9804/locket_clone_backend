@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.Entity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,62 +31,62 @@ import java.util.Optional;
 @Log
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
-    private final Mapper<UserEntity, UserDto> userMapper;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final JwtUtil jwtUtil;
+  private final AuthenticationManager authenticationManager;
+  private final Mapper<UserEntity, UserDto> userMapper;
 
-    @Override
-    public SignInRes signIn(SignInReq signInReq) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        signInReq.getLoginInfo(),
-                        signInReq.getPassword()));
-        var user = userRepository.findByEmail(signInReq.loginInfo).orElseThrow();
-        UserDto userDto = userMapper.mapTo(user);
+  @Override
+  public SignInRes signIn(SignInReq signInReq) {
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+            signInReq.getLoginInfo(),
+            signInReq.getPassword()));
+    var user = userRepository.findByEmail(signInReq.loginInfo).orElseThrow();
+    UserDto userDto = userMapper.mapTo(user);
 
-        String token = jwtUtil.generateToken(user.id);
-        jwtUtil.verifyToken(token);
-        return SignInRes.builder()
-                .token(token)
-                .user(userDto)
-                .build();
+    String token = jwtUtil.generateToken(user.id);
+    jwtUtil.verifyToken(token);
+    return SignInRes.builder()
+        .token(token)
+        .user(userDto)
+        .build();
+  }
+
+  @Override
+  public UserDto signUp(SignUpReq signUpReq) throws RuntimeException {
+    Optional<UserEntity> findUser = userRepository.findByEmail(signUpReq.email);
+    if (findUser.isPresent()) {
+      throw new RuntimeException("User already exists");
     }
 
-    @Override
-    public UserDto signUp(SignUpReq signUpReq) throws RuntimeException {
-        Optional<UserEntity> findUser = userRepository.findByEmail(signUpReq.email);
-        if (findUser.isPresent()) {
-            throw new RuntimeException("User already exists");
-        }
+    UserEntity userEntity = UserEntity.builder()
+        .name(signUpReq.name)
+        .phoneNumber(signUpReq.phoneNumber)
+        .email(signUpReq.email)
+        .build();
+    userEntity.password = passwordEncoder.encode(signUpReq.password);
+    System.out.println(userEntity.email);
+    UserEntity savedUser = userRepository.save(userEntity);
+    return userMapper.mapTo(savedUser);
+  }
 
-        UserEntity userEntity = UserEntity.builder()
-                .name(signUpReq.name)
-                .phoneNumber(signUpReq.phoneNumber)
-                .email(signUpReq.email)
-                .build();
-        userEntity.password = passwordEncoder.encode(signUpReq.password);
-        System.out.println(userEntity.email);
-        UserEntity savedUser = userRepository.save(userEntity);
-        return userMapper.mapTo(savedUser);
+  @Override
+  public UserEntity getCurrentUser() {
+    Object principal = SecurityContextHolder
+        .getContext()
+        .getAuthentication()
+        .getPrincipal();
+
+    if (principal instanceof UserEntity userEntity) {
+      UserDto userDto = userMapper.mapTo(userEntity);
+      System.out.println(userEntity);
+      return userEntity;
     }
 
-    @Override
-    public UserDto getCurrentUser() {
-        Object principal = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+    throw new RuntimeException("Cannot cast user in auth service impl getCurrentUser");
 
-        if (principal instanceof UserEntity userEntity) {
-            UserDto userDto = userMapper.mapTo(userEntity);
-            System.out.println(userEntity);
-            return userDto;
-        }
-
-        throw new RuntimeException("Cannot cast user in auth service impl getCurrentUser");
-
-    }
+  }
 
 }

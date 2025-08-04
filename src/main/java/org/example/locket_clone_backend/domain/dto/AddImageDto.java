@@ -15,6 +15,6 @@ import lombok.ToString;
 @ToString
 
 public class AddImageDto {
-    private MultipartFile file;
-    private String caption;
+  private String fileUrl;
+  private String caption;
 }

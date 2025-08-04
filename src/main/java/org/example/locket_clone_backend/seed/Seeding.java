@@ -120,7 +120,6 @@ public class Seeding implements ApplicationRunner {
         .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
         .build();
 
-    posts.clear();
     posts.add(postDto1);
     posts.add(postDto2);
   }
