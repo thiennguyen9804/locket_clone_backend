@@ -1,6 +1,7 @@
 package org.example.locket_clone_backend.domain.dto;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -20,5 +21,5 @@ public class PostDto {
   public String caption;
   public Instant createdAt;
   public UserDto user;
-  public Set<InteractionDto> interactionList;
+  public List<InteractionDto> interactionList;
 }

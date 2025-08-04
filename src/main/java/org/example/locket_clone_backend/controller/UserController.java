@@ -3,6 +3,7 @@ package org.example.locket_clone_backend.controller;
 import java.util.List;
 
 import org.example.locket_clone_backend.domain.dto.UserDto;
+import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -25,24 +26,25 @@ public class UserController {
   @GetMapping("/friends")
   @Operation(summary = "Get user's friend", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getFriends() {
-    UserDto userDto = authService.getCurrentUser();
-    List<UserDto> res = userService.getFriends(userDto.id);
+    UserEntity userEntity = authService.getCurrentUser();
+
+    List<UserDto> res = userService.getFriends(userEntity.id);
     return res;
   }
 
   @GetMapping("/friends/sent")
   @Operation(summary = "Get all user who I've made friend request", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getSentRequest() {
-    UserDto userDto = authService.getCurrentUser();
-    List<UserDto> res = userService.getSentRequestFriends(userDto.id);
+    UserEntity userEntity = authService.getCurrentUser();
+    List<UserDto> res = userService.getSentRequestFriends(userEntity.id);
     return res;
   }
 
   @GetMapping("/friends/received")
   @Operation(summary = "Get all user who's made friend request to me", security = @SecurityRequirement(name = "bearerAuth"))
   public List<UserDto> getReceivedRquest() {
-    UserDto userDto = authService.getCurrentUser();
-    List<UserDto> res = userService.getReceivedRequestFriends(userDto.id);
+    UserEntity userEntity = authService.getCurrentUser();
+    List<UserDto> res = userService.getReceivedRequestFriends(userEntity.id);
     return res;
   }
 }

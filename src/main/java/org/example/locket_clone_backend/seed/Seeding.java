@@ -5,12 +5,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityEntity;
+import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityId;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipEntity;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.RelationshipId;
@@ -18,6 +21,7 @@ import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.mapper.impl.PostMapper;
 import org.example.locket_clone_backend.repository.InteractionRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
+import org.example.locket_clone_backend.repository.PostVisibilityRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
 import org.example.locket_clone_backend.service.PostService;
@@ -44,13 +48,14 @@ public class Seeding implements ApplicationRunner {
   private final UserRepository userRepository;
   private final RelationshipRepository relationshipRepository;
   private final InteractionRepository interactionRepository;
+  private final PostVisibilityRepository postVisibilityRepository;
   private final PasswordEncoder bEncoder;
   private final UserService userService;
   private final Mapper<UserEntity, UserDto> userMapper;
   private final PostService postService;
   private final PostMapper postMapper;
 
-  List<PostDto> posts = new ArrayList<>();
+  List<PostEntity> posts = new ArrayList<>();
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
@@ -106,31 +111,59 @@ public class Seeding implements ApplicationRunner {
   }
 
   void setUpPost() {
-    PostDto postDto1 = PostDto.builder()
+    PostEntity postEntity1 = PostEntity.builder()
         .caption("my pretty Kiana")
         .imageUrl("https://res.cloudinary.com/dow4rkzmb/image/upload/v1752720466/yksl67l6w2wh1x4xuqwn.jpg")
-        .user(userMapper.mapTo(user1))
+        .user((user1))
         .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
         .build();
 
-    PostDto postDto2 = PostDto.builder()
+    PostEntity postEntity2 = PostEntity.builder()
         .caption("test image")
         .imageUrl("https://res.cloudinary.com/dow4rkzmb/image/upload/v1748053256/ylcte1lasx0hcrovhkhm.jpg")
-        .user(userMapper.mapTo(user2))
+        .user((user2))
         .createdAt(Instant.now().minus(10, ChronoUnit.DAYS))
         .build();
+    post1 = postEntity1;
+    post2 = postEntity2;
 
-    posts.add(postDto1);
-    posts.add(postDto2);
+    posts.add(postEntity1);
+    posts.add(postEntity2);
   }
 
   @Transactional
   void seedingPost() {
     setUpPost();
-    for (PostDto postDto : posts) {
-      PostDto saved = postService.createPost(postDto);
-      log.info("✅ Seeded post: " + saved);
+    for (PostEntity post : posts) {
+      postRepository.save(post);
+
+      List<RelationshipEntity> results = relationshipRepository.findUsersByRelationship(post.user.id,
+          Relationship.FRIEND);
+      List<UserEntity> friendList = results.stream().map((RelationshipEntity rela) -> {
+        if (rela.getUser1().id != post.user.id) {
+          return rela.getUser1();
+        } else {
+          return rela.getUser2();
+
+        }
+      }).toList();
+
+      List<PostVisibilityEntity> visibilities = friendList.stream()
+          .map(user -> PostVisibilityEntity.builder()
+              .id(new PostVisibilityId(user.id, post.id))
+              .user(user)
+              .post(post)
+              .build())
+          .collect(Collectors.toList());
+      visibilities.add(PostVisibilityEntity.builder()
+          .id(new PostVisibilityId(post.user.id, post.id))
+          .user(post.user)
+          .post(post)
+          .build());
+
+      postVisibilityRepository.saveAll(visibilities);
     }
+
   }
 
   @Transactional

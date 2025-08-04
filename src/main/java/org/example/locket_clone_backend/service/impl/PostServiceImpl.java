@@ -89,11 +89,16 @@ public class PostServiceImpl implements PostService {
             .user(user)
             .post(post)
             .build())
-        .toList();
-    for (PostVisibilityEntity postIter : visibilities) {
-
-      log.info("PostServiceImpl bulkAddPost postVisbility = {} " + postIter);
-    }
+        .collect(Collectors.toList());
+    visibilities.add(PostVisibilityEntity.builder()
+        .id(new PostVisibilityId(post.user.id, post.id))
+        .user(post.user)
+        .post(post)
+        .build());
+    // for (PostVisibilityEntity postIter : visibilities) {
+    //
+    // log.info("PostServiceImpl bulkAddPost postVisbility = {} " + postIter);
+    // }
 
     postVisibilityRepository.saveAll(visibilities);
   }

@@ -22,21 +22,7 @@ public class PostMapper implements Mapper<PostEntity, PostDto> {
 
   @Override
   public PostDto mapTo(PostEntity a) {
-    PostDto postDto = new PostDto();
-    postDto.setId(a.getId());
-    postDto.setImageUrl(a.getImageUrl());
-    postDto.setCaption(a.getCaption());
-    postDto.setCreatedAt(a.getCreatedAt());
-    postDto.setUser(userMapper.mapTo(a.getUser()));
-    if (a.getInteractionList() != null) {
-      postDto.setInteractionList(
-          a.getInteractionList().stream()
-              .map(interactionMapper::mapTo)
-              .collect(Collectors.toSet()));
-    } else {
-      postDto.setInteractionList(new HashSet<>());
-    }
-    return postDto;
+    return modelMapper.map(a, PostDto.class);
   }
 
   @Override

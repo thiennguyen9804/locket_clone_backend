@@ -21,4 +21,4 @@ COPY --from=builder /app/target/locket_clone_backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8181
 
 # Start Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker", "-DskipTests"]

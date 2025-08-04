@@ -31,6 +31,6 @@ public class PostEntity {
   public UserEntity user;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.MERGE)
-  public Set<InteractionEntity> interactionList;
+  public List<InteractionEntity> interactionList;
 
 }
