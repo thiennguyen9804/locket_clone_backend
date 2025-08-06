@@ -1,0 +1,43 @@
+package org.example.locket_clone_backend.domain.entity.message_entity;
+
+import java.sql.Timestamp;
+
+import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.hibernate.annotations.CurrentTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+@Table(name = "messages")
+@Entity
+public class MessageEntity {
+
+  @EmbeddedId
+  private MessageId id;
+
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @MapsId("senderId")
+  @JoinColumn(name = "sender", referencedColumnName = "id")
+  private UserEntity sender;
+
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @MapsId("receiverId")
+  @JoinColumn(name = "receiver", referencedColumnName = "id")
+  private UserEntity receiver;
+
+  private String text;
+  private String imageUrl;
+
+  @CurrentTimestamp
+  private Timestamp createdAt;
+}
