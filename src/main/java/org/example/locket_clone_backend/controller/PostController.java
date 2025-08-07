@@ -90,8 +90,8 @@ public class PostController {
     return ResponseEntity.status(HttpStatus.SC_CREATED).build();
   }
 
-  @PatchMapping(value = "posts/interact/{id}")
   @Operation(summary = "React to other's post", security = @SecurityRequirement(name = "bearerAuth"))
+  @PatchMapping(value = "posts/interact/{id}")
   public ResponseEntity<Void> interact(
       @PathVariable(name = "id") Long postId,
       @RequestParam String emoji) {

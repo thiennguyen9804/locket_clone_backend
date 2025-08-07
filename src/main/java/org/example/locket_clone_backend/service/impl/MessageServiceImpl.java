@@ -1,5 +1,8 @@
 package org.example.locket_clone_backend.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.example.locket_clone_backend.domain.dto.MessageResponse;
 import org.example.locket_clone_backend.domain.dto.SentMessageDto;
 import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
@@ -9,6 +12,7 @@ import org.example.locket_clone_backend.repository.MessageRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.MessageService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,22 @@ public class MessageServiceImpl implements MessageService {
     var saved = messageRepository.save(message);
     var response = messageMapper.mapTo(saved);
     return response;
+  }
+
+  @Override
+  public List<MessageResponse> getMessages(Long receiverId, Pageable pageable) {
+    var sender = authService.getCurrentUser();
+    var receiver = userRepository.findById(receiverId);
+    List<MessageEntity> messageEntities = messageRepository.findMessagesBetweenUsers(sender.id, receiverId, pageable)
+        .getContent();
+    List<MessageResponse> responses = messageEntities
+        .stream()
+        .map(messageMapper::mapTo)
+
+        .collect(Collectors.toList());
+
+    return responses;
+
   }
 
 }

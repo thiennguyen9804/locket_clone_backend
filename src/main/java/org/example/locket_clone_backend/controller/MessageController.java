@@ -1,29 +1,31 @@
 package org.example.locket_clone_backend.controller;
 
-import org.springframework.stereotype.Controller;
+import java.util.List;
 
+import org.apache.logging.log4j.message.Message;
+import org.example.locket_clone_backend.domain.dto.MessageResponse;
+import org.example.locket_clone_backend.service.MessageService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 
-import org.example.locket_clone_backend.domain.dto.SentMessageDto;
-import org.example.locket_clone_backend.service.MessageService;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MessageController {
-  private final SimpMessagingTemplate simpMessagingTemplate;
   private final MessageService messageService;
 
-  @MessageMapping("/app/chat.add-message")
-  public void sendMessage(
-      @Payload SentMessageDto messageDto) {
-    var response = messageService.sendMessage(messageDto);
-    simpMessagingTemplate.convertAndSendToUser(
-        response.getReceiver().id.toString(),
-        "/secured/user/queue/specific-user",
-        response);
+  @GetMapping("/messages/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public List<MessageResponse> getMessages(
+      @PathVariable("id") Long receiverId,
+      Pageable pageable) {
+    return messageService.getMessages(receiverId, pageable);
   }
 
 }
