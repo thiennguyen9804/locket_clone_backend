@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.NativeQuery;
 
 public interface MessageRepository extends JpaRepository<MessageEntity, MessageId> {
-  @NativeQuery(value = "SELECT * FROM MESSAGES WHERE (senderId = ?1 AND receiverId = ?2) OR (senderId = ?2 AND receiverId = ?1) ORDER BY created_at DESC", countQuery = "SELECT count(*) FROM MEESAGES WHERE (senderId = ?1 AND receiverId = ?2) OR (senderId = ?2 AND receiverId = ?1)")
+  @NativeQuery(value = "SELECT * FROM MESSAGES WHERE (sender = ?1 AND receiver = ?2) OR (sender = ?2 AND receiver = ?1) ORDER BY created_at DESC", countQuery = "SELECT count(*) FROM MEESAGES WHERE (sender = ?1 AND receiver = ?2) OR (sender = ?2 AND receiver = ?1)")
   Page<MessageEntity> findMessagesBetweenUsers(
       Long user1,
       Long user2,

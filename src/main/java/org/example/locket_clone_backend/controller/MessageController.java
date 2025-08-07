@@ -5,6 +5,9 @@ import java.util.List;
 import org.apache.logging.log4j.message.Message;
 import org.example.locket_clone_backend.domain.dto.MessageResponse;
 import org.example.locket_clone_backend.service.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +22,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageController {
   private final MessageService messageService;
+  private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
-  @GetMapping("/messages/{id}")
+  @GetMapping("/messages/{receiverId}")
   @ResponseStatus(value = HttpStatus.OK)
-  public List<MessageResponse> getMessages(
-      @PathVariable("id") Long receiverId,
+  public Page<MessageResponse> getMessages(
+      @PathVariable("receiverId") Long receiverId,
       Pageable pageable) {
+
+    logger.info("receiverId: " + receiverId);
+    logger.info("pageable: " + pageable);
+
     return messageService.getMessages(receiverId, pageable);
   }
 
