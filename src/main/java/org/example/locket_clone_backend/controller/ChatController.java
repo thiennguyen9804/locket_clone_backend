@@ -4,7 +4,10 @@ import org.springframework.stereotype.Controller;
 
 import lombok.RequiredArgsConstructor;
 
+import java.security.Principal;
+
 import org.example.locket_clone_backend.domain.dto.SentMessageDto;
+import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.service.MessageService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,8 +21,10 @@ public class ChatController {
 
   @MessageMapping("/chat.add-message")
   public void sendMessage(
-      @Payload SentMessageDto messageDto) {
-    var response = messageService.sendMessage(messageDto);
+      @Payload SentMessageDto messageDto,
+      Principal principal) {
+    String senderEmail = principal.getName();
+    var response = messageService.sendMessage(messageDto, senderEmail);
     simpMessagingTemplate.convertAndSendToUser(
         response.getReceiver().id.toString(),
         "/queue/messages",

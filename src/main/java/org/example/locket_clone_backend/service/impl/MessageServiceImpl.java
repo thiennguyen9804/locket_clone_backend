@@ -32,8 +32,8 @@ public class MessageServiceImpl implements MessageService {
   private final MessageMapper messageMapper;
 
   @Override
-  public MessageResponse sendMessage(SentMessageDto messageDto) {
-    var sender = authService.getCurrentUser();
+  public MessageResponse sendMessage(SentMessageDto messageDto, String senderEmail) {
+    var sender = userRepository.findByEmail(senderEmail).get();
     var receiver = userRepository.findById(messageDto.getReceiverId()).get();
     var message = MessageEntity.builder()
         .id(new MessageId(sender.id, receiver.id))
@@ -43,6 +43,7 @@ public class MessageServiceImpl implements MessageService {
         .imageUrl(messageDto.getImageUrl())
         .build();
     var saved = messageRepository.save(message);
+    System.out.print(saved.toString());
     var response = messageMapper.mapTo(saved);
     return response;
   }

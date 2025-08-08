@@ -9,9 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Embeddable
 @Data
+@ToString
+
 public class MessageId implements Serializable {
   private Long senderId;
   private Long receiverId;
