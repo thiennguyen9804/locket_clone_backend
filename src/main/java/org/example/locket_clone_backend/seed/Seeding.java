@@ -1,5 +1,6 @@
 package org.example.locket_clone_backend.seed;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
+import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
+import org.example.locket_clone_backend.domain.entity.message_entity.MessageId;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityEntity;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityId;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
@@ -20,6 +23,7 @@ import org.example.locket_clone_backend.domain.entity.relationship_entity.Relati
 import org.example.locket_clone_backend.mapper.Mapper;
 import org.example.locket_clone_backend.mapper.impl.PostMapper;
 import org.example.locket_clone_backend.repository.InteractionRepository;
+import org.example.locket_clone_backend.repository.MessageRepository;
 import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.PostVisibilityRepository;
 import org.example.locket_clone_backend.repository.RelationshipRepository;
@@ -54,6 +58,7 @@ public class Seeding implements ApplicationRunner {
   private final Mapper<UserEntity, UserDto> userMapper;
   private final PostService postService;
   private final PostMapper postMapper;
+  private final MessageRepository messageRepository;
 
   List<PostEntity> posts = new ArrayList<>();
 
@@ -64,6 +69,7 @@ public class Seeding implements ApplicationRunner {
       addFriend();
       seedingPost();
       seedInteraction();
+      seedingChat();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -129,6 +135,29 @@ public class Seeding implements ApplicationRunner {
 
     posts.add(postEntity1);
     posts.add(postEntity2);
+  }
+
+  @Transactional
+  void seedingChat() {
+    MessageEntity message1 = MessageEntity.builder()
+        .id(new MessageId(user1.id, user2.id))
+        .sender(user1)
+        .receiver(user2)
+        .text("Hello Kiana")
+        .createdAt(Timestamp.from(Instant.now().minus(7, ChronoUnit.MINUTES)))
+        .build();
+
+    MessageEntity message2 = MessageEntity.builder()
+        .id(new MessageId(user2.id, user1.id))
+        .sender(user2)
+        .receiver(user1)
+        .text("Hello Hayashing, how it's going?")
+        .createdAt(Timestamp.from(Instant.now().minus(5, ChronoUnit.MINUTES)))
+        .build();
+
+    messageRepository.save(message1);
+    messageRepository.save(message2);
+
   }
 
   @Transactional

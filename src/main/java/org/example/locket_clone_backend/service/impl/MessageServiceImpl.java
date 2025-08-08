@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     var sender = authService.getCurrentUser();
     var receiver = userRepository.findById(messageDto.getReceiverId()).get();
     var message = MessageEntity.builder()
-        .id(MessageId.builder().senderId(sender.id).receiverId(receiver.id).build())
+        .id(new MessageId(sender.id, receiver.id))
         .sender(sender)
         .receiver(receiver)
         .text(messageDto.getText())
