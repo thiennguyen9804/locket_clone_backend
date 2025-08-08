@@ -1,6 +1,7 @@
 package org.example.locket_clone_backend.domain.entity.message_entity;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.hibernate.annotations.CurrentTimestamp;
@@ -46,6 +47,5 @@ public class MessageEntity {
   private String imageUrl;
 
   @CurrentTimestamp
-  private Timestamp createdAt;
-
+  private Instant createdAt;
 }

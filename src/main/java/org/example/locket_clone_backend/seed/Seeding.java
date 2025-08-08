@@ -144,7 +144,7 @@ public class Seeding implements ApplicationRunner {
         .sender(user1)
         .receiver(user2)
         .text("Hello Kiana")
-        .createdAt(Timestamp.from(Instant.now().minus(7, ChronoUnit.MINUTES)))
+        .createdAt(Instant.now().minus(7, ChronoUnit.MINUTES))
         .build();
 
     MessageEntity message2 = MessageEntity.builder()
@@ -152,7 +152,7 @@ public class Seeding implements ApplicationRunner {
         .sender(user2)
         .receiver(user1)
         .text("Hello Hayashing, how it's going?")
-        .createdAt(Timestamp.from(Instant.now().minus(5, ChronoUnit.MINUTES)))
+        .createdAt(Instant.now().minus(5, ChronoUnit.MINUTES))
         .build();
 
     messageRepository.save(message1);

@@ -1,6 +1,7 @@
 package org.example.locket_clone_backend.domain.dto;
 
 import java.security.Timestamp;
+import java.time.Instant;
 
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 
@@ -29,6 +30,6 @@ public class MessageResponse {
   private String imageUrl;
   private UserDto sender;
   private UserDto receiver;
-  private Timestamp createdAt;
+  private Instant createdAt;
 
 }
