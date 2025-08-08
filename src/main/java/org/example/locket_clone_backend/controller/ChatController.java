@@ -16,13 +16,13 @@ public class ChatController {
   private final SimpMessagingTemplate simpMessagingTemplate;
   private final MessageService messageService;
 
-  @MessageMapping("/secured/chat.add-message")
+  @MessageMapping("/chat.add-message")
   public void sendMessage(
       @Payload SentMessageDto messageDto) {
     var response = messageService.sendMessage(messageDto);
     simpMessagingTemplate.convertAndSendToUser(
         response.getReceiver().id.toString(),
-        "/secured/user/queue/specific-user",
+        "/queue/messages",
         response);
   }
 

@@ -80,8 +80,6 @@ public class AuthServiceImpl implements AuthService {
         .getPrincipal();
 
     if (principal instanceof UserEntity userEntity) {
-      UserDto userDto = userMapper.mapTo(userEntity);
-      System.out.println(userEntity);
       return userEntity;
     }
 
