@@ -5,7 +5,7 @@ import java.time.Instant;
 
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 
-import io.micrometer.common.lang.Nullable;
+import jakarta.annotation.Nullable;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;

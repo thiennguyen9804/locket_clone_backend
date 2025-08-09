@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.example.locket_clone_backend.domain.dto.MessageResponse;
 import org.example.locket_clone_backend.domain.dto.SentMessageDto;
 import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
-import org.example.locket_clone_backend.domain.entity.message_entity.MessageId;
 import org.example.locket_clone_backend.mapper.impl.MessageMapper;
 import org.example.locket_clone_backend.repository.MessageRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
@@ -36,7 +35,6 @@ public class MessageServiceImpl implements MessageService {
     var sender = userRepository.findByEmail(senderEmail).get();
     var receiver = userRepository.findById(messageDto.getReceiverId()).get();
     var message = MessageEntity.builder()
-        .id(new MessageId(sender.id, receiver.id))
         .sender(sender)
         .receiver(receiver)
         .text(messageDto.getText())

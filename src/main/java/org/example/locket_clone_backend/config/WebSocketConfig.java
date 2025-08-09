@@ -1,38 +1,23 @@
 package org.example.locket_clone_backend.config;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.repository.UserRepository;
 import org.example.locket_clone_backend.security.JwtUtil;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.converter.DefaultContentTypeResolver;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.converter.MessageConverter;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -91,18 +76,5 @@ public class WebSocketConfig implements
       }
     });
   }
-
-  // @Override
-  // public boolean configureMessageConverters(List<MessageConverter>
-  // messageConverters) {
-  // DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
-  // resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
-  // MappingJackson2MessageConverter converter = new
-  // MappingJackson2MessageConverter();
-  // converter.setObjectMapper(new ObjectMapper());
-  // converter.setContentTypeResolver(resolver);
-  // messageConverters.add(converter);
-  // return false;
-  // }
 
 }

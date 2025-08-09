@@ -10,6 +10,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -32,16 +35,15 @@ import lombok.ToString;
 @ToString
 public class MessageEntity {
 
-  @EmbeddedId
-  private MessageId id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_id_seq")
+  private Long id;
 
   @ManyToOne(cascade = CascadeType.MERGE)
-  @MapsId("senderId")
   @JoinColumn(name = "sender", referencedColumnName = "id")
   private UserEntity sender;
 
   @ManyToOne(cascade = CascadeType.MERGE)
-  @MapsId("receiverId")
   @JoinColumn(name = "receiver", referencedColumnName = "id")
   private UserEntity receiver;
 

@@ -14,7 +14,6 @@ import org.example.locket_clone_backend.domain.entity.InteractionEntity;
 import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
-import org.example.locket_clone_backend.domain.entity.message_entity.MessageId;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityEntity;
 import org.example.locket_clone_backend.domain.entity.post_visibility_entity.PostVisibilityId;
 import org.example.locket_clone_backend.domain.entity.relationship_entity.Relationship;
@@ -140,7 +139,6 @@ public class Seeding implements ApplicationRunner {
   @Transactional
   void seedingChat() {
     MessageEntity message1 = MessageEntity.builder()
-        .id(new MessageId(user1.id, user2.id))
         .sender(user1)
         .receiver(user2)
         .text("Hello Kiana")
@@ -148,7 +146,6 @@ public class Seeding implements ApplicationRunner {
         .build();
 
     MessageEntity message2 = MessageEntity.builder()
-        .id(new MessageId(user2.id, user1.id))
         .sender(user2)
         .receiver(user1)
         .text("Hello Hayashing, how it's going?")
