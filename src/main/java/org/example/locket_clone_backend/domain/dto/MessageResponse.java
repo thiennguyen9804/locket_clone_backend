@@ -27,7 +27,7 @@ import lombok.ToString;
 public class MessageResponse {
   private String text;
   @Nullable
-  private String imageUrl;
+  private PostDto post;
   private UserDto sender;
   private UserDto receiver;
   private Instant createdAt;

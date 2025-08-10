@@ -9,6 +9,7 @@ import org.example.locket_clone_backend.domain.dto.SentMessageDto;
 import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
 import org.example.locket_clone_backend.mapper.impl.MessageMapper;
 import org.example.locket_clone_backend.repository.MessageRepository;
+import org.example.locket_clone_backend.repository.PostRepository;
 import org.example.locket_clone_backend.repository.UserRepository;
 import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.MessageService;
@@ -27,6 +28,7 @@ public class MessageServiceImpl implements MessageService {
   private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
   private final MessageRepository messageRepository;
   private final AuthService authService;
+  private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final MessageMapper messageMapper;
 
@@ -34,14 +36,14 @@ public class MessageServiceImpl implements MessageService {
   public MessageResponse sendMessage(SentMessageDto messageDto, String senderEmail) {
     var sender = userRepository.findByEmail(senderEmail).get();
     var receiver = userRepository.findById(messageDto.getReceiverId()).get();
+    var post = postRepository.findById(messageDto.getPostId()).get();
     var message = MessageEntity.builder()
         .sender(sender)
         .receiver(receiver)
         .text(messageDto.getText())
-        .imageUrl(messageDto.getImageUrl())
+        .post(post)
         .build();
     var saved = messageRepository.save(message);
-    System.out.print(saved.toString());
     var response = messageMapper.mapTo(saved);
     return response;
   }
@@ -49,7 +51,6 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public Page<MessageResponse> getMessages(Long receiverId, Pageable pageable) {
     var sender = authService.getCurrentUser();
-    var receiver = userRepository.findById(receiverId);
     Page<MessageEntity> messageEntities = messageRepository.findMessagesBetweenUsers(sender.id, receiverId, pageable);
     Page<MessageResponse> responses = messageEntities.map(messageMapper::mapTo);
     return responses;

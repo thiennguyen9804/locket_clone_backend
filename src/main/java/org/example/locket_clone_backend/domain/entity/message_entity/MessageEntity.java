@@ -3,6 +3,7 @@ package org.example.locket_clone_backend.domain.entity.message_entity;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+import org.example.locket_clone_backend.domain.entity.PostEntity;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.hibernate.annotations.CurrentTimestamp;
 
@@ -48,7 +49,10 @@ public class MessageEntity {
   private UserEntity receiver;
 
   private String text;
-  private String imageUrl;
+
+  @ManyToOne(cascade = CascadeType.MERGE)
+  @JoinColumn(name = "post_id", referencedColumnName = "id")
+  private PostEntity post;
 
   @CurrentTimestamp
   private Instant createdAt;

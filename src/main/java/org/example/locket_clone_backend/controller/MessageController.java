@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.message.Message;
 import org.example.locket_clone_backend.domain.dto.MessageResponse;
 import org.example.locket_clone_backend.domain.dto.SentMessageDto;
+import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 public class MessageController {
   private final MessageService messageService;
   private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
-  private final SimpMessagingTemplate simpMessagingTemplate;
 
   @GetMapping("/messages/{receiverId}")
   @ResponseStatus(value = HttpStatus.OK)
@@ -36,20 +36,17 @@ public class MessageController {
       @PathVariable("receiverId") Long receiverId,
       Pageable pageable) {
 
-    logger.info("receiverId: " + receiverId);
-    logger.info("pageable: " + pageable);
+    // logger.info("receiverId: " + receiverId);
+    // logger.info("pageable: " + pageable);
 
     return messageService.getMessages(receiverId, pageable);
   }
 
-  // @MessageMapping("/chat.add-message")
-  // public void sendMessage(
-  // @Payload SentMessageDto messageDto) {
-  // var response = messageService.sendMessage(messageDto);
-  // simpMessagingTemplate.convertAndSendToUser(
-  // response.getReceiver().id.toString(),
-  // "/queue/messages",
-  // response);
+  // @GetMapping("/messages")
+  // @ResponseStatus(value = HttpStatus.OK)
+  // public List<MessageResponse> getMessageList() {
+  // var userEntity = authService.getCurrentUser();
+  //
   // }
 
 }

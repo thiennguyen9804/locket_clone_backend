@@ -9,7 +9,7 @@ import lombok.Data;
 public class SentMessageDto {
   private String text;
   @Nullable
-  private String imageUrl;
+  private Long postId;
 
   private Long receiverId;
 }

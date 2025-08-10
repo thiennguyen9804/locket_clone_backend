@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RelationshipRepository extends JpaRepository<RelationshipEntity, RelationshipId> {
-  // get 'friend' relationship between user1 and getPendingFriendByUser2
+  // get 'friend' relationship between user1 and user2
   @Query("""
       	SELECT r FROM RelationshipEntity r
       	WHERE (r.user1.id = ?1 AND r.user2.id = ?2)

@@ -8,6 +8,7 @@ import org.example.locket_clone_backend.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -15,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 public class MessageMapper implements Mapper<MessageEntity, MessageResponse> {
 
   private final ModelMapper modelMapper;
+
+  // @PostConstruct
+  // private void init() {
+  // }
 
   @Override
   public MessageResponse mapTo(MessageEntity a) {
