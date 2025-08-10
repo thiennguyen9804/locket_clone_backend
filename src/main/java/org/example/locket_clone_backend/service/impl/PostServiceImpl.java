@@ -73,10 +73,7 @@ public class PostServiceImpl implements PostService {
 
       }
     }).toList();
-    for (UserEntity friend : friendList) {
-      log.info("🚀 ~ PostServiceImpl ~ List<UserEntity>getFriends ~ res: {} " +
-          friend);
-    }
+
     bulkAddPost(friendList, postEntity);
     final PostDto res = postMapper.mapTo(postEntity);
     return res;

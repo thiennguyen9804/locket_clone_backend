@@ -30,7 +30,7 @@ public class PostEntity {
   @ManyToOne(cascade = CascadeType.MERGE)
   public UserEntity user;
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
   public List<InteractionEntity> interactionList;
 
 }

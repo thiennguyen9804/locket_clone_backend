@@ -23,20 +23,14 @@ public class PostVisibilityEntity {
   @EmbeddedId
   private PostVisibilityId id;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   @MapsId("post")
   @JoinColumn(name = "post", referencedColumnName = "id")
   private PostEntity post;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   @MapsId("userCanSee")
   @JoinColumn(name = "user_can_see", referencedColumnName = "id")
   private UserEntity user;
-
-  @CurrentTimestamp
-  private Instant createdAt;
-
-  @UpdateTimestamp
-  private Instant updatedAt;
 
 }
