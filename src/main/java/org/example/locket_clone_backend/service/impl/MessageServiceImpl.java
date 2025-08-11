@@ -49,12 +49,21 @@ public class MessageServiceImpl implements MessageService {
   }
 
   @Override
-  public Page<MessageResponse> getMessages(Long receiverId, Pageable pageable) {
+  public Page<MessageResponse> getMessagesWithReceiver(Long receiverId, Pageable pageable) {
     var sender = authService.getCurrentUser();
     Page<MessageEntity> messageEntities = messageRepository.findMessagesBetweenUsers(sender.id, receiverId, pageable);
     Page<MessageResponse> responses = messageEntities.map(messageMapper::mapTo);
     return responses;
 
+  }
+
+  @Override
+  public List<MessageResponse> getMessages() {
+    var user = authService.getCurrentUser();
+    return messageRepository.findLatestMessageByUser(user.id)
+        .stream()
+        .map(messageMapper::mapTo)
+        .toList();
   }
 
 }

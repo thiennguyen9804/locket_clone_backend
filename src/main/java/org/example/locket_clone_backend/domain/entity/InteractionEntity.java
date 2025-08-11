@@ -23,11 +23,11 @@ public class InteractionEntity {
   private Long id;
 
   @JoinColumn(name = "user_id")
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   private UserEntity user;
 
   @JoinColumn(name = "post_id")
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   private PostEntity post;
 
   @NotEmpty

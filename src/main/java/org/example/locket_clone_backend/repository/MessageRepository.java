@@ -1,5 +1,8 @@
 package org.example.locket_clone_backend.repository;
 
+import java.util.List;
+
+import org.example.locket_clone_backend.domain.dto.MessageResponse;
 import org.example.locket_clone_backend.domain.entity.message_entity.MessageEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,4 +16,15 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
       Long user1,
       Long user2,
       Pageable pageable);
+
+  @Query(value = """
+          SELECT m.* FROM messages m
+          WHERE m.created_at = (
+              SELECT MAX(m2.created_at)
+              FROM messages m2
+              WHERE (m2.sender = :userId OR m2.receiver = :userId)
+          )
+      """, nativeQuery = true)
+  List<MessageEntity> findLatestMessageByUser(Long userId);
+
 }

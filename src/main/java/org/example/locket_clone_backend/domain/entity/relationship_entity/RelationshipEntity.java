@@ -23,20 +23,15 @@ public class RelationshipEntity {
   private RelationshipId id;
 
   // sender
-  @OneToOne(cascade = CascadeType.MERGE)
+  @OneToOne
   @MapsId("user1")
-  @JoinColumns({
-      @JoinColumn(name = "user1", referencedColumnName = "id")
-  })
+  @JoinColumn(name = "user1", referencedColumnName = "id")
   private UserEntity user1;
 
   // receiver
-  @OneToOne(cascade = CascadeType.MERGE)
+  @OneToOne
   @MapsId("user2")
-  @JoinColumns({
-
-      @JoinColumn(name = "user2", referencedColumnName = "id")
-  })
+  @JoinColumn(name = "user2", referencedColumnName = "id")
   private UserEntity user2;
 
   @Enumerated(EnumType.STRING)

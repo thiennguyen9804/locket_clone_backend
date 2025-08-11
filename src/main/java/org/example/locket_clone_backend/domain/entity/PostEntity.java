@@ -27,7 +27,7 @@ public class PostEntity {
   public Instant createdAt;
 
   @JoinColumn(name = "user_id")
-  @ManyToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   public UserEntity user;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)

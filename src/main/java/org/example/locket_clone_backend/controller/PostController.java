@@ -3,35 +3,22 @@ package org.example.locket_clone_backend.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cloudinary.Cloudinary;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.List;
-
 import org.apache.http.HttpStatus;
 import org.example.locket_clone_backend.domain.dto.AddImageDto;
 import org.example.locket_clone_backend.domain.dto.AllPostsRes;
-import org.example.locket_clone_backend.domain.dto.PostDto;
 import org.example.locket_clone_backend.domain.dto.UserDto;
 import org.example.locket_clone_backend.domain.entity.UserEntity;
 import org.example.locket_clone_backend.mapper.impl.UserMapper;
@@ -39,7 +26,6 @@ import org.example.locket_clone_backend.service.AuthService;
 import org.example.locket_clone_backend.service.ImageService;
 import org.example.locket_clone_backend.service.PostService;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor

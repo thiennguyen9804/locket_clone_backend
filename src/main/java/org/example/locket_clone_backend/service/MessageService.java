@@ -10,5 +10,7 @@ import org.springframework.data.domain.Pageable;
 public interface MessageService {
   public MessageResponse sendMessage(SentMessageDto messageDto, String senderEmail);
 
-  public Page<MessageResponse> getMessages(Long receiverId, Pageable pageable);
+  public Page<MessageResponse> getMessagesWithReceiver(Long receiverId, Pageable pageable);
+
+  public List<MessageResponse> getMessages();
 }
